@@ -1,5 +1,5 @@
 from factory.django import DjangoModelFactory
-from exercises.models.model_exercise import Exercise
+from exercises.models.exercise import Exercise
 
 
 class ExerciseFactory(DjangoModelFactory):

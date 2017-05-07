@@ -1,5 +1,5 @@
 from django.test import TestCase
-from exercises.exercise_tests.factories import ExerciseFactory
+from exercises.tests.factories import ExerciseFactory
 
 
 class ExercisesTests(TestCase):
