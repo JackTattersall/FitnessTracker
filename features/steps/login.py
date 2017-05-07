@@ -109,3 +109,11 @@ def step_impl(context, username, password):
     browser.find_element_by_name('username').send_keys(username)
     browser.find_element_by_name('password').send_keys(password)
     browser.find_element_by_name('submit').click()
+
+
+@given("I am logged in")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    pass
