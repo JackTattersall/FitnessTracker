@@ -1,5 +1,7 @@
 from behave import given, when, then
 from exercises.tests.factories import UserFactory
+from nose.tools import assert_true, assert_equal
+from selenium import webdriver
 
 
 @given('an anonymous user')
@@ -16,10 +18,10 @@ def step_impl(context):
 @when('I submit a valid login page')
 def step_impl(context):
     browser = context.browser
-    browser.get(context.base_url + '/login/')
+    browser.get(context.base_url + '/account/login/')
 
     # Checks for Cross-Site Request Forgery protection input
-    assert browser.find_element_by_name('csrfmiddlewaretoken').is_enabled()
+    assert_true(browser.find_element_by_name('csrfmiddlewaretoken').is_enabled())
 
     # Fill login form and submit it (valid version)
     browser.find_element_by_name('username').send_keys('foo')
@@ -27,20 +29,19 @@ def step_impl(context):
     browser.find_element_by_name('submit').click()
 
 
-@then('I am redirected to the login success page')
-def step_impl(context):
-    browser = context.browser
+@then('I am redirected to the "{text}" page')
+def step_impl(context, text):
+    browser = context.browser  # type: webdriver.PhantomJS
 
     # Checks success status
-    assert browser.current_url.endswith('/login/success/')
-    assert browser.find_element_by_id('main_title').text == "Login success"
+    assert_equal(browser.title, text)
 
 
 @when('I submit an invalid login page')
 def step_impl(context):
     browser = context.browser
 
-    browser.get(context.base_url + '/login/')
+    browser.get(context.base_url + '/account/login/')
 
     # Checks for Cross-Site Request Forgery protection input (once again)
     assert browser.find_element_by_name('csrfmiddlewaretoken').is_enabled()
@@ -51,10 +52,10 @@ def step_impl(context):
     browser.find_element_by_name('submit').click()
 
 
-@then('I am redirected to the login fail page')
-def step_impl(context):
-    browser = context.browser
+@when('I logout')
+def step_impls(context):
+    browser = context.browser  # type: webdriver.PhantomJS
 
-    # Checks redirection URL
-    assert browser.current_url.endswith('/login/fail/')
-    assert browser.find_element_by_id('main_title').text == "Login failure"
+    browser.get(context.base_url + '/account/logout/')
+
+

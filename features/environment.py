@@ -6,7 +6,7 @@ def before_all(context):
     # command-line environment, which is what we want for use with SemaphoreCI
     # For debugging purposes, you can use the Firefox driver instead.
 
-    context.browser = webdriver.PhantomJS()
+    context.browser = webdriver.PhantomJS()  # type: webdriver
     context.browser.implicitly_wait(1)
     context.server_url = 'http://localhost:8000'
 
