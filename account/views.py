@@ -1,11 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm
-
-
-@login_required()
-def dashboard(request):
-    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
 
 def register(request):
