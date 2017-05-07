@@ -1,1 +1,1 @@
-from .exercise import Exercise
+from exercises.models.exercise import Exercise
