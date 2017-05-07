@@ -1,14 +1,18 @@
 Feature: Login form
 
-  Scenario: Access the login form and logout screen
+  Scenario: Valid login
 
     Given an anonymous user
     When I submit a valid login page
     Then I am redirected to the "Dashboard" page
 
+  Scenario: Invalid login
+
     Given an anonymous user
     When I submit an invalid login page
     Then I am redirected to the "Log-in" page
+
+  Scenario: Logout redirects to correct page
 
     Given an anonymous user
     When I submit a valid login page

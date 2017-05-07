@@ -59,3 +59,53 @@ def step_impls(context):
     browser.get(context.base_url + '/account/logout/')
 
 
+@when("I submit a valid change password form")
+def step_impl(context):
+    browser = context.browser  # type: webdriver.PhantomJS
+
+    # Checks for Cross-Site Request Forgery protection input
+    assert_true(browser.find_element_by_name('csrfmiddlewaretoken').is_enabled())
+
+    # Fill login form and submit it (valid version)
+    browser.find_element_by_name('old_password').send_keys('bar')
+    browser.find_element_by_name('new_password1').send_keys('newpassword')
+    browser.find_element_by_name('new_password2').send_keys('newpassword')
+    browser.find_element_by_name('change').click()
+
+
+@when("I navigate to the change password page")
+def step_impl(context):
+    browser = context.browser  # type: webdriver.PhantomJS
+
+    browser.get(context.base_url + '/account/password_change/')
+
+    # Checks success status
+    assert_equal(browser.title, 'Change your password')
+
+
+@when("I submit an invalid change password form")
+def step_impl(context):
+    browser = context.browser  # type: webdriver.PhantomJS
+
+    # Checks for Cross-Site Request Forgery protection input
+    assert_true(browser.find_element_by_name('csrfmiddlewaretoken').is_enabled())
+
+    # Fill login form and submit it (valid version)
+    browser.find_element_by_name('old_password').send_keys('bar')
+    browser.find_element_by_name('new_password1').send_keys('newp')
+    browser.find_element_by_name('new_password2').send_keys('newpassword')
+    browser.find_element_by_name('change').click()
+
+
+@when('I login with username "{username}" and password "{password}"')
+def step_impl(context, username, password):
+    browser = context.browser
+    browser.get(context.base_url + '/account/login/')
+
+    # Checks for Cross-Site Request Forgery protection input
+    assert_true(browser.find_element_by_name('csrfmiddlewaretoken').is_enabled())
+
+    # Fill login form and submit it (valid version)
+    browser.find_element_by_name('username').send_keys(username)
+    browser.find_element_by_name('password').send_keys(password)
+    browser.find_element_by_name('submit').click()
