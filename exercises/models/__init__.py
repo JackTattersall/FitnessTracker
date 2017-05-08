@@ -1,3 +1,3 @@
 from exercises.models.workout import Workout, WorkoutType, WorkoutExercise
-from exercises.models.exercise import Exercise
+from exercises.models.exercise import Exercise, Session, ExerciseSession
 
