@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'account/', include('account.urls')),
     url(r'^account/', include('django.contrib.auth.urls')),
     url(r'^workout/', include('exercises.urls', namespace='exercises')),
+    url(r'', include('api.urls', namespace='api')),
 ]

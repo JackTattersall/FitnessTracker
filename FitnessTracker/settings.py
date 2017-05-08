@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'behave_django'
+    'behave_django',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,13 @@ STATIC_URL = '/static/'
 # Email settings
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Rest framework settings
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 10,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}

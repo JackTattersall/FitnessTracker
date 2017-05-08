@@ -3,7 +3,7 @@ from django.db import models
 
 class Exercise(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    exercises = models.ManyToManyField(u'Session', through=u'ExerciseSession', related_name=u'exercises')
+    sessions = models.ManyToManyField(u'Session', through=u'ExerciseSession', related_name=u'exercises')
 
     class Meta:
         db_table = 'FITNESS_exercise'
@@ -22,7 +22,7 @@ class Session(models.Model):
         db_table = 'FITNESS_session'
 
     def __str__(self):
-        return self.name
+        return str(self.created)
 
 
 class ExerciseSession(models.Model):
