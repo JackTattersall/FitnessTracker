@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Exercise(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     sessions = models.ManyToManyField(u'Session', through=u'ExerciseSession', related_name=u'exercises')
 
     class Meta:

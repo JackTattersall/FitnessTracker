@@ -12,20 +12,20 @@
         <th>Weight</th>
         {% for exercise in exercises %}
             <tr>
-                <td>{{ exercise.name }}</td>
-                <form action="." method="post">
+                <td id="exercise_{{ forloop.counter }}">{{ exercise.name }}</td>
+                <form id="add_session_form_{{ forloop.counter }}" action="." method="post">
                     {% csrf_token %}
                     <td>
-                        <input type="text" name="lastname" value="" style="text-align:center;"><br><br>
+                        <input type="text" id="sets_input_{{ forloop.counter }}"  value="" style="text-align:center;"><br><br>
                     </td>
                     <td>
-                        <input type="text" name="lastname" value="" style="text-align:center;"><br><br>
+                        <input type="text" id="reps_input_{{ forloop.counter }}" value="" style="text-align:center;"><br><br>
                     </td>
                     <td>
-                        <input type="text" name="lastname" value="" style="text-align:center;"><br><br>
+                        <input type="text" id="weight_input_{{ forloop.counter }}" value="" style="text-align:center;"><br><br>
                     </td>
                     <td>
-                        <input type="submit" value="Complete">
+                        <input type="submit" id="session_submit_{{ forloop.counter }}" value="Complete">
                     </td>
                 </form>
             </tr>
@@ -59,11 +59,10 @@
     $(document).ready(function() {
         $('#add_exercise_form').on('submit', function(e) {
             e.preventDefault();
-              var objects =[
-                  {
-                      name: $('#exercise_name').val(),
-                  },
-              ];
+            var objects =[
+                { name: $('#exercise_name').val() }
+            ];
+
             $.ajax({
               type: 'POST',
               contentType: "application/json",
@@ -78,13 +77,56 @@
               }),
               success: function(response) {
                 $('#add_exercise_form')[0].reset();
+                location.reload()
               },
-{#                  error: function(){ ... },#}
+              error: function(){
+
+              },
               url: '/api/workout/',
               cache:false
             });
         });
+
+
+        $("[id^='add_session_form_']").on('submit', function(e) {
+            e.preventDefault();
+            var idNumber = $(this).attr("id").replace('add_session_form_','');
+            var repsId = '#reps_input_' + idNumber;
+            var setsId = '#sets_input_' + idNumber;
+            var weightId = '#weight_input_' + idNumber;
+            var exerciseNameId = '#exercise_' + idNumber;
+            var exerciseName = $(exerciseNameId).text();
+            var exercises = [
+                { name: exerciseName }
+            ];
+
+            $.ajax({
+              type: 'POST',
+              contentType: "application/json",
+              beforeSend: function(request) {
+                  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+              },
+              data: JSON.stringify({
+                  reps: $(repsId).val(),
+                  weight: $(weightId).val(),
+                  sets: $(setsId).val(),
+                  exercises: exercises,
+              }),
+              success: function(response) {
+                  $(repsId).prop('disabled', true)
+                  $(weightId).prop('disabled', true)
+                  $(setsId).prop('disabled', true)
+              },
+              error: function(){
+
+              },
+              url: '/api/session/',
+              cache:false
+            });
+        })
     });
+
+
     </script>
 
 {% endblock %}

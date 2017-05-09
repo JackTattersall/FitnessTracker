@@ -13,11 +13,12 @@ class ExerciseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Exercise.objects.all()
+
+        if self.request.query_params.get('latest'):
+            workout = Workout.objects.latest('created')
+            queryset = workout.exercises.all()
+
         return queryset
-
-    # def create(self, request, *args, **kwargs):
-    #     super(ExerciseViewSet, self).create(request, *args, **kwargs)
-
 
 
 class SessionViewSet(viewsets.ModelViewSet):
