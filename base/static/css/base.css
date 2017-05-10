@@ -112,7 +112,7 @@ input, textarea {
 input[type=submit], a.button {
     font-weight:bold;
     background:#12c064;
-    color:#fff;
+    color:#f3f7cc;
     padding:10px 20px;
     font-size:14px;
     text-transform:uppercase;
@@ -275,4 +275,14 @@ img.user-detail {
 .action .date {
     font-style:italic;
     color:#ccc;
+}
+
+input[type = "submit"]:hover {
+    color:#ffffff;
+    cursor: pointer;
+}
+
+input[type = "submit"]:active {
+    vertical-align: top;
+    padding: 8px 13px 6px;
 }

@@ -14,8 +14,9 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Exercise.objects.all()
 
-        if self.request.query_params.get('latest'):
-            workout = Workout.objects.latest('created')
+        if self.request.query_params.get('workout'):
+            workout_id = int(self.request.query_params.get('workout'))
+            workout = Workout.objects.get(id=workout_id)
             queryset = workout.exercises.all()
 
         return queryset
@@ -35,19 +36,22 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     """
-    A viewset for viewing and editing Session instances.
+    A viewset for viewing and editing Workout instances.
     """
     serializer_class = WorkoutSerializer
 
     def get_queryset(self):
         queryset = Workout.objects.all()
 
+        if self.request.query_params.get('latest'):
+            queryset = [Workout.objects.latest('created'), ]
+
         return queryset
 
 
 class WorkoutExerciseViewSet(viewsets.ModelViewSet):
     """
-    A viewset for viewing and editing Session instances.
+    A viewset for viewing and editing WorkoutsExercises instances.
     """
     serializer_class = WorkoutExerciseSerializer
 

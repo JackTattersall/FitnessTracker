@@ -1,13 +1,29 @@
 from rest_framework import serializers
 from exercises.models.exercise import Exercise, Session, ExerciseSession
-from exercises.models.workout import Workout, WorkoutExercise
+from exercises.models.workout import Workout, WorkoutExercise, WorkoutType
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
+    sessions = serializers.SerializerMethodField()
+
+    def get_sessions(self, obj):
+        sessions = Session.objects.filter(exercises__pk=obj.id)
+        if sessions:
+            session = sessions.latest('created')
+            if session.completed:
+                return {
+                        "reps": session.reps,
+                        "sets": session.sets,
+                        "weight": session.weight
+                }
+            else:
+                return 0
+        else:
+            return 0
 
     class Meta:
         model = Exercise
-        fields = ('name',)
+        fields = ('name', 'sessions')
 
     def create(self, validated_data):
         session_data = validated_data.pop('sessions')
@@ -23,7 +39,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Session
-        fields = ('created', 'reps', 'weight', 'sets', 'exercises')
+        fields = ('created', 'reps', 'weight', 'sets', 'exercises', 'completed')
 
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercises', None)
@@ -39,9 +55,16 @@ class SessionSerializer(serializers.ModelSerializer):
         return session
 
 
+class WorkoutTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkoutType
+        fields = ('name', 'description')
+
+
 class WorkoutSerializer(serializers.ModelSerializer):
     exercises = ExerciseSerializer(many=True, required=False)
     created = serializers.DateTimeField(required=False)
+    workout_type = WorkoutTypeSerializer(required=False)
 
     class Meta:
         model = Workout
@@ -49,13 +72,14 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercises', None)
+        workout_type_data = validated_data.pop('workout_type', None)
 
-        workout, created = Workout.objects.get_or_create(
-            name=validated_data['name'],
-            defaults={
-                'workout_type_id': 1
-            }
-        )
+        if workout_type_data:
+            workout_type = WorkoutType.objects.create(**workout_type_data)
+            workout = Workout.objects.create(workout_type_id=workout_type.id)
+        else:
+            workout_created = validated_data['created']
+            workout = Workout.objects.get(created=workout_created)
 
         if exercise_data:
             for exercise_data in exercise_data:

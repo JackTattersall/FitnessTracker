@@ -17,6 +17,7 @@ class Session(models.Model):
     reps = models.IntegerField(blank=True, null=True)
     weight = models.IntegerField(blank=True, null=True)
     sets = models.IntegerField(blank=True, null=True)
+    completed = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'FITNESS_session'
