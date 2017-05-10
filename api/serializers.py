@@ -64,11 +64,12 @@ class WorkoutTypeSerializer(serializers.ModelSerializer):
 class WorkoutSerializer(serializers.ModelSerializer):
     exercises = ExerciseSerializer(many=True, required=False)
     created = serializers.DateTimeField(required=False)
+    completed = serializers.DateTimeField(required=False)
     workout_type = WorkoutTypeSerializer(required=False)
 
     class Meta:
         model = Workout
-        fields = ('id', 'created', 'workout_type', 'exercises', 'name')
+        fields = ('id', 'created', 'workout_type', 'exercises', 'completed')
 
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercises', None)

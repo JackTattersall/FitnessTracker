@@ -58,20 +58,30 @@
 
         var workoutId;
         var workoutCreated;
-        var workoutXHJR =
-            $.getJSON( "/api/workout/?latest=latest/", function(data) {
-                workoutId = data.results[0]['id'];
-                console.log( "success" );
-			})
-            .done(function() {
-				console.log( "second success" );
-            })
-            .fail(function() {
-				console.log( "error" );
-            })
-            .always(function() {
-				console.log( "complete" );
-            });
+        var workoutCompleted;
+
+        $.getJSON( "/api/workout/?latest=latest/", function(data) {
+            workoutId = data.results[0]['id'];
+            workoutCreated = data.results[0]['created'];
+            workoutCompleted = data.results[0]['completed'];
+            if (workoutCompleted == null) {
+                $('#exercise_table').prop('hidden', false);
+                $('#add_exercise_form').prop('hidden', false);
+                $('#start_workout_form').prop('hidden', true);
+                $('#workout_type_name').append(data.results[0]['workout_type']['name']);
+                createTable(data.results[0]);
+                console.log("success");
+            }
+        })
+        .done(function() {
+            console.log( "second success" );
+        })
+        .fail(function() {
+            console.log( "error" );
+        })
+        .always(function() {
+            console.log( "complete" );
+        });
 
         $('#add_exercise_form').on('submit', function(e) {
             e.preventDefault();
@@ -80,59 +90,26 @@
             ];
 
             $.ajax({
-              type: 'POST',
-              contentType: "application/json",
-              beforeSend: function(request) {
+                type: 'POST',
+                contentType: "application/json",
+                beforeSend: function(request) {
                   request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-              },
-              data: JSON.stringify({
+                },
+                data: JSON.stringify({
                   id: workoutId,
                   created: workoutCreated,
                   exercises: objects
-              }),
-              success: function(response) {
+                }),
+                success: function(response) {
                   $('#exercise_table').prop('hidden', false);
                   $('#add_exercise_form')[0].reset();
-                    var trHTML = '';
-                    $.each(response['exercises'], function (key,value) {
-                        var sets = '';
-                        var weight = '';
-                        var reps = '';
-                        var disabled = '';
-                        var complete = 'COMPLETE';
-                        if (value.sessions !== 0){
-                            sets = value.sessions['sets'];
-                            weight = value.sessions['weight'];
-                            reps = value.sessions['reps'];
-                            disabled = 'disabled';
-                            complete = 'COMPLETED';
-                        }
-                        trHTML +=
-                            `
-                            <tr>
-                                <td id="exercise_${key}">${value.name}</td>
-                                <td>
-                                    <input type="text" id="sets_input_${key}"  value="${sets}" style="text-align:center;" ${disabled}><br><br>
-                                </td>
-                                <td>
-                                    <input type="text" id="reps_input_${key}"  value="${reps}" style="text-align:center;" ${disabled}><br><br>
-                                </td>
-                                <td>
-                                    <input type="text" id="weight_input_${key}"  value="${weight}" style="text-align:center;" ${disabled}><br><br>
-                                </td>
-                                <td>
-                                    <input type="submit" id="session_submit_${key}" value="${complete}" ${disabled}>
-                                </td>
-                            </tr>`;
-                    });
+                  createTable(response);
+                },
+                error: function(){
 
-                    $('#exercise_table tbody').empty().append(trHTML);
-              },
-              error: function(){
-
-              },
-              url: '/api/workout/',
-              cache:false
+                },
+                url: '/api/workout/',
+                cache:false
             });
         });
 
@@ -203,8 +180,44 @@
                 url: '/api/workout/',
                 cache:false
             })
-
         });
+
+        function createTable (response) {
+            var trHTML = '';
+            $.each(response['exercises'], function (key,value) {
+                var sets = '';
+                var weight = '';
+                var reps = '';
+                var disabled = '';
+                var complete = 'COMPLETE';
+                if (value.sessions !== 0){
+                    sets = value.sessions['sets'];
+                    weight = value.sessions['weight'];
+                    reps = value.sessions['reps'];
+                    disabled = 'disabled';
+                    complete = 'COMPLETED';
+                }
+                trHTML +=
+                    `
+                    <tr>
+                        <td id="exercise_${key}">${value.name}</td>
+                        <td>
+                            <input type="text" id="sets_input_${key}"  value="${sets}" style="text-align:center;" ${disabled}><br><br>
+                        </td>
+                        <td>
+                            <input type="text" id="reps_input_${key}"  value="${reps}" style="text-align:center;" ${disabled}><br><br>
+                        </td>
+                        <td>
+                            <input type="text" id="weight_input_${key}"  value="${weight}" style="text-align:center;" ${disabled}><br><br>
+                        </td>
+                        <td>
+                            <input type="submit" id="session_submit_${key}" value="${complete}" ${disabled}>
+                        </td>
+                    </tr>`;
+            });
+
+            $('#exercise_table tbody').empty().append(trHTML);
+        }
     });
     </script>
 {% endblock %}

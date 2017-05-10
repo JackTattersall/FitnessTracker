@@ -44,7 +44,9 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         queryset = Workout.objects.all()
 
         if self.request.query_params.get('latest'):
-            queryset = [Workout.objects.latest('created'), ]
+            workout = Workout.objects.latest('created')
+            if not workout.completed:
+                queryset = [Workout.objects.latest('created'), ]
 
         return queryset
 
