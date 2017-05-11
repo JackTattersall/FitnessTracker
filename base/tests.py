@@ -1,3 +1,10 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
 
-# Create your tests here.
+
+class ViewsTest(TestCase):
+
+    def test_dashboard_view(self):
+        self.client = Client()
+        response = self.client.get(reverse('dashboard'))
+        self.assertContains(response, 'Dashboard')

@@ -1,8 +1,11 @@
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 from .serializers import ExerciseSerializer, SessionSerializer, WorkoutSerializer, WorkoutExerciseSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from exercises.models.exercise import Exercise, Session
 from exercises.models.workout import Workout, WorkoutExercise
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ExerciseViewSet(viewsets.ModelViewSet):
@@ -16,7 +19,7 @@ class ExerciseViewSet(viewsets.ModelViewSet):
 
         if self.request.query_params.get('workout'):
             workout_id = int(self.request.query_params.get('workout'))
-            workout = Workout.objects.get(id=workout_id)
+            workout = get_object_or_404(Workout, id=workout_id)
             queryset = workout.exercises.all()
 
         return queryset

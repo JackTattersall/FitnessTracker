@@ -4,220 +4,253 @@
 {% block title %}Workout{% endblock %}
 
 {% block content %}
-    <h1>Workout</h1>
-    <h2 id="workout_type_name"></h2>
-    <div>
-        <form action="." id="start_workout_form" method="post">
-        {% csrf_token %}
-        Workout type<br>
-        <input type="text" id="workout_name" value=""><br><br>
-        <input type="submit" id="start" value="Start">
-    </form>
+	<h1>Workout</h1>
+	<h2 id="workout_type_name"></h2>
+	<div>
+		<form action="." id="start_workout_form" method="post" hidden="true">
+		{% csrf_token %}
+		Workout type<br>
+		<input type="text" id="workout_name" value=""><br><br>
+		<input type="submit" id="start" value="Start">
+	</form>
 
-    </div>
-    <table id="exercise_table" hidden="true">
-        <thead>
-            <tr>
-                <th>Exercise</th>
-                <th>Sets</th>
-                <th>Reps</th>
-                <th>Weight</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <form action="." id="add_exercise_form" method="post" hidden="true">
-        {% csrf_token %}
-        Add new exercise:<br>
-        <input type="text" id="exercise_name" value="Exercise name"><br><br>
-        <input type="submit" id="add" value="Add">
-    </form>
+	</div>
+	<table id="exercise_table" hidden="true">
+		<thead>
+			<tr>
+				<th>Exercise</th>
+				<th>Sets</th>
+				<th>Reps</th>
+				<th>Weight</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<form action="." id="add_exercise_form" method="post" hidden="true">
+		{% csrf_token %}
+		Add new exercise:<br>
+		<input type="text" id="exercise_name" value=""><br><br>
+		<input type="submit" id="add" value="Add">
+	</form>
+	<div>
+		<input type="submit" id="complete_workout" value="Complete Workout" hidden="true">
+	</div>
 
-    <script type="text/javascript">
-
-
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+	<script type="text/javascript">
 
 
-    $(document).ready(function() {
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
 
-        var workoutId;
-        var workoutCreated;
-        var workoutCompleted;
 
-        $.getJSON( "/api/workout/?latest=latest/", function(data) {
-            workoutId = data.results[0]['id'];
-            workoutCreated = data.results[0]['created'];
-            workoutCompleted = data.results[0]['completed'];
-            if (workoutCompleted == null) {
-                $('#exercise_table').prop('hidden', false);
-                $('#add_exercise_form').prop('hidden', false);
-                $('#start_workout_form').prop('hidden', true);
-                $('#workout_type_name').append(data.results[0]['workout_type']['name']);
-                createTable(data.results[0]);
-                console.log("success");
-            }
-        })
-        .done(function() {
-            console.log( "second success" );
-        })
-        .fail(function() {
-            console.log( "error" );
-        })
-        .always(function() {
-            console.log( "complete" );
-        });
+	$(document).ready(function() {
 
-        $('#add_exercise_form').on('submit', function(e) {
+		var workoutId;
+		var workoutCreated;
+		var is_complete;
+
+		$.getJSON( "/api/workout/?latest=latest/", function(data) {
+			workoutId = data.results[0]['id'];
+			workoutCreated = data.results[0]['created'];
+			is_complete = data.results[0]['is_complete'];
+			if (is_complete === false) {
+				$('#exercise_table').prop('hidden', false);
+				$('#add_exercise_form').prop('hidden', false);
+				$('#start_workout_form').prop('hidden', true);
+				$('#workout_type_name').append(data.results[0]['workout_type']['name']);
+				$('#complete_workout').prop('hidden', false);
+				createTable(data.results[0]);
+				console.log(`Initial data load - workout with id ${data.results[0]['id']} not marked as completed`);
+			}
+			else {
+				$('#start_workout_form').prop('hidden', false);
+				console.log(`Initial data load - workout with id ${data.results[0]['id']} not marked as completed`);
+			}
+		})
+		.done(function() {
+			console.log(  "Initial data load success" );
+		})
+		.fail(function() {
+			console.log( "Initial data load failure" );
+		})
+		.always(function() {
+			console.log( "Initial data load" );
+		});
+
+		$('#add_exercise_form').on('submit', function(e) {
+			e.preventDefault();
+			var objects =[
+				{ name: $('#exercise_name').val() }
+			];
+
+			$.ajax({
+				type: 'POST',
+				contentType: "application/json",
+				beforeSend: function(request) {
+				  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+				},
+				data: JSON.stringify({
+				  id: workoutId,
+				  created: workoutCreated,
+				  exercises: objects
+				}),
+				success: function(response) {
+				  $('#exercise_table').prop('hidden', false);
+				  $('#add_exercise_form')[0].reset();
+				  createTable(response);
+				},
+				error: function(){
+
+				},
+				url: '/api/workout/',
+				cache:false
+			});
+		});
+
+		$(document).on('click', '[id^="session_submit_"]', function(e){
+			var submitButton = $(this)[0];
+			var tableRow = $(this).parent().parent()[0]['children'];
+			e.preventDefault();
+			var exerciseName = tableRow[0]['childNodes'][0]['data'];
+			var reps = tableRow[2]['childNodes'][1]['value'];
+			var sets = tableRow[1]['childNodes'][1]['value'];
+			var weight = tableRow[3]['childNodes'][1]['value'];
+			var exercises = [
+				{ name: exerciseName }
+			];
+
+			$.ajax({
+				type: 'POST',
+				contentType: "application/json",
+				beforeSend: function(request) {
+				  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+				},
+				data: JSON.stringify({
+				  reps: reps,
+				  weight: weight,
+				  sets: sets,
+				  completed: true,
+				  exercises: exercises
+				}),
+				success: function() {
+					submitButton['disabled'] = true;
+					submitButton['value'] = 'completed';
+					tableRow[1]['childNodes'][1]['disabled'] = true;
+					tableRow[2]['childNodes'][1]['disabled'] = true;
+					tableRow[3]['childNodes'][1]['disabled'] = true;
+				},
+				error: function(){
+
+				},
+				url: '/api/session/',
+				cache:false
+			});
+		});
+
+		$('#start_workout_form').on('submit', function(e) {
+			e.preventDefault();
+			var workoutType =
+				{ name: $('#workout_name').val() };
+
+			$.ajax({
+				type: 'POST',
+				contentType: 'application/JSON',
+				beforeSend: function(request) {
+				  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+				},
+				data: JSON.stringify({
+					workout_type: workoutType
+				}),
+				success: function (response) {
+					workoutCreated = response['created'];
+					$('#add_exercise_form').prop('hidden', false);
+					$('#start_workout_form').prop('hidden', true);
+					$('#workout_type_name').append(response['workout_type']['name']);
+					$('#complete_workout').prop('hidden', false);
+
+				},
+				error: function () {
+
+				},
+				url: '/api/workout/',
+				cache:false
+			})
+		});
+
+		function createTable (response) {
+			var trHTML = '';
+			$.each(response['exercises'], function (key,value) {
+				var sets = '';
+				var weight = '';
+				var reps = '';
+				var disabled = '';
+				var complete = 'COMPLETE';
+				if (value.sessions !== 0){
+					sets = value.sessions['sets'];
+					weight = value.sessions['weight'];
+					reps = value.sessions['reps'];
+					disabled = 'disabled';
+					complete = 'COMPLETED';
+				}
+				trHTML +=
+					`
+					<tr>
+						<td id="exercise_${key}">${value.name}</td>
+						<td>
+							<input type="text" id="sets_input_${key}"  value="${sets}" style="text-align:center;" ${disabled}><br><br>
+						</td>
+						<td>
+							<input type="text" id="reps_input_${key}"  value="${reps}" style="text-align:center;" ${disabled}><br><br>
+						</td>
+						<td>
+							<input type="text" id="weight_input_${key}"  value="${weight}" style="text-align:center;" ${disabled}><br><br>
+						</td>
+						<td>
+							<input type="submit" id="session_submit_${key}" value="${complete}" ${disabled}>
+						</td>
+					</tr>`;
+			});
+
+			$('#exercise_table tbody').empty().append(trHTML);
+		}
+
+		$('#complete_workout').on('click', function (e) {
             e.preventDefault();
-            var objects =[
-                { name: $('#exercise_name').val() }
-            ];
-
-            $.ajax({
-                type: 'POST',
-                contentType: "application/json",
-                beforeSend: function(request) {
-                  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-                },
-                data: JSON.stringify({
-                  id: workoutId,
-                  created: workoutCreated,
-                  exercises: objects
-                }),
-                success: function(response) {
-                  $('#exercise_table').prop('hidden', false);
-                  $('#add_exercise_form')[0].reset();
-                  createTable(response);
-                },
-                error: function(){
-
-                },
-                url: '/api/workout/',
-                cache:false
-            });
-        });
-
-        $(document).on('click', '[id^="session_submit_"]', function(e){
-            var submitButton = $(this)[0];
-            var tableRow = $(this).parent().parent()[0]['children'];
-            e.preventDefault();
-            var exerciseName = tableRow[0]['childNodes'][0]['data'];
-            var reps = tableRow[2]['childNodes'][1]['value'];
-            var sets = tableRow[1]['childNodes'][1]['value'];
-            var weight = tableRow[3]['childNodes'][1]['value'];
-            var exercises = [
-                { name: exerciseName }
-            ];
-
-            $.ajax({
-                type: 'POST',
-                contentType: "application/json",
-                beforeSend: function(request) {
-                  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-                },
-                data: JSON.stringify({
-                  reps: reps,
-                  weight: weight,
-                  sets: sets,
-                  completed: true,
-                  exercises: exercises
-                }),
-                success: function() {
-                    submitButton['disabled'] = true;
-                    submitButton['value'] = 'completed';
-                    tableRow[1]['childNodes'][1]['disabled'] = true;
-                    tableRow[2]['childNodes'][1]['disabled'] = true;
-                    tableRow[3]['childNodes'][1]['disabled'] = true;
-                },
-                error: function(){
-
-                },
-                url: '/api/session/',
-                cache:false
-            });
-        });
-
-        $('#start_workout_form').on('submit', function(e) {
-            e.preventDefault();
-            var workoutType =
-                { name: $('#workout_name').val() };
-
             $.ajax({
                 type: 'POST',
                 contentType: 'application/JSON',
-                beforeSend: function(request) {
-                  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+                beforeSend: function (request) {
+                    request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
                 },
                 data: JSON.stringify({
-                    workout_type: workoutType
+                    created: workoutCreated,
+                    is_complete: true,
                 }),
                 success: function (response) {
-                    workoutCreated = response['created'];
-                    $('#add_exercise_form').prop('hidden', false);
-                    $('#start_workout_form').prop('hidden', true);
-                    $('#workout_type_name').append(response['workout_type']['name']);
-
+                    console.log(`workout completed successfully with id ${response['id']}`);
+                    location.reload();
                 },
-                error: function () {
-
+                error: function (response) {
+                    console.log(`workout completed failed ${response}`)
                 },
                 url: '/api/workout/',
-                cache:false
-            })
-        });
-
-        function createTable (response) {
-            var trHTML = '';
-            $.each(response['exercises'], function (key,value) {
-                var sets = '';
-                var weight = '';
-                var reps = '';
-                var disabled = '';
-                var complete = 'COMPLETE';
-                if (value.sessions !== 0){
-                    sets = value.sessions['sets'];
-                    weight = value.sessions['weight'];
-                    reps = value.sessions['reps'];
-                    disabled = 'disabled';
-                    complete = 'COMPLETED';
-                }
-                trHTML +=
-                    `
-                    <tr>
-                        <td id="exercise_${key}">${value.name}</td>
-                        <td>
-                            <input type="text" id="sets_input_${key}"  value="${sets}" style="text-align:center;" ${disabled}><br><br>
-                        </td>
-                        <td>
-                            <input type="text" id="reps_input_${key}"  value="${reps}" style="text-align:center;" ${disabled}><br><br>
-                        </td>
-                        <td>
-                            <input type="text" id="weight_input_${key}"  value="${weight}" style="text-align:center;" ${disabled}><br><br>
-                        </td>
-                        <td>
-                            <input type="submit" id="session_submit_${key}" value="${complete}" ${disabled}>
-                        </td>
-                    </tr>`;
+                cache: false
             });
-
-            $('#exercise_table tbody').empty().append(trHTML);
-        }
-    });
-    </script>
+        });
+	});
+	</script>
 {% endblock %}

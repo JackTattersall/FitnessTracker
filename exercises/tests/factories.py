@@ -1,8 +1,10 @@
 from factory.django import DjangoModelFactory
 from factory import RelatedFactory, SubFactory
-from exercises.models.exercise import Exercise
-from exercises.models.workout import Workout, WorkoutType
+from exercises.models.exercise import Exercise, Session, ExerciseSession
+from exercises.models.workout import Workout, WorkoutType, WorkoutExercise
 from django.contrib.auth.models import User
+import factory
+import datetime
 
 
 class ExerciseFactory(DjangoModelFactory):
@@ -31,3 +33,27 @@ class WorkoutFactory(DjangoModelFactory):
         model = Workout
 
     workout_type = SubFactory(WorkoutTypeFactory)
+
+
+class SessionFactory(DjangoModelFactory):
+    created = datetime.datetime.now()
+
+    class Meta:
+        model = Session
+
+
+class WorkoutsExercisesFactroy(DjangoModelFactory):
+    workout = factory.SubFactory(Workout)
+    exercise = factory.SubFactory(Exercise)
+
+    class Meta:
+        model = WorkoutExercise
+
+
+class ExercisesSessionsFactory(DjangoModelFactory):
+    exercise = factory.SubFactory(Exercise)
+    session = factory.SubFactory(SessionFactory)
+
+    class Meta:
+        model = ExerciseSession
+

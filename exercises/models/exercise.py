@@ -23,7 +23,7 @@ class Session(models.Model):
         db_table = 'FITNESS_session'
 
     def __str__(self):
-        return str(self.created)
+        return str('reps = {} sets = {} weight = {}'.format(self.reps, self.weight, self.sets))
 
 
 class ExerciseSession(models.Model):

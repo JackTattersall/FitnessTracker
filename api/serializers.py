@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from exercises.models.exercise import Exercise, Session, ExerciseSession
 from exercises.models.workout import Workout, WorkoutExercise, WorkoutType
+import datetime
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
@@ -9,6 +10,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     def get_sessions(self, obj):
         sessions = Session.objects.filter(exercises__pk=obj.id)
         if sessions:
+            print('vincent')
             session = sessions.latest('created')
             if session.completed:
                 return {
@@ -23,13 +25,14 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ('name', 'sessions')
+        fields = ('name', 'sessions', 'workouts')
 
     def create(self, validated_data):
-        session_data = validated_data.pop('sessions')
+        session_data = validated_data.pop('sessions', None)
         exercise = Exercise.objects.create(**validated_data)
-        for session_data in session_data:
-            Session.objects.create(exercise=exercise, **session_data)
+        if session_data:
+            for session_data in session_data:
+                Session.objects.create(exercise=exercise, **session_data)
         return exercise
 
 
@@ -69,11 +72,12 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ('id', 'created', 'workout_type', 'exercises', 'completed')
+        fields = ('id', 'created', 'workout_type', 'exercises', 'completed', 'is_complete')
 
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercises', None)
         workout_type_data = validated_data.pop('workout_type', None)
+        is_complete_data = validated_data.pop('is_complete', None)
 
         if workout_type_data:
             workout_type = WorkoutType.objects.create(**workout_type_data)
@@ -86,6 +90,12 @@ class WorkoutSerializer(serializers.ModelSerializer):
             for exercise_data in exercise_data:
                 exercise = Exercise.objects.create(**exercise_data)
                 WorkoutExercise.objects.create(exercise=exercise, workout=workout)
+
+        if is_complete_data:
+            workout_created = validated_data['created']
+            workout_completed = datetime.datetime.now()
+            workout = Workout.objects.filter(created=workout_created).update(completed=workout_completed,
+                                                                             is_complete=True)
 
         return workout
 

@@ -17,6 +17,7 @@ class Workout(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE)
     exercises = models.ManyToManyField(Exercise, through=u'WorkoutExercise', related_name=u'workouts')
+    is_complete = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'FITNESS_workout'
