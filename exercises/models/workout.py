@@ -1,6 +1,4 @@
 from django.db import models
-from exercises.models.exercise import Exercise
-import datetime
 
 
 class WorkoutType(models.Model):
@@ -8,27 +6,28 @@ class WorkoutType(models.Model):
     description = models.CharField(max_length=255, null=True)
 
     class Meta:
-        db_table = 'FITNESS_workout_type'
+        db_table = 'workout_type'
 
 
 class Workout(models.Model):
-    id = models.AutoField(primary_key=True)
     completed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE)
-    exercises = models.ManyToManyField(Exercise, through=u'WorkoutExercise', related_name=u'workouts')
+    workout_type = models.OneToOneField(WorkoutType, on_delete=models.CASCADE, primary_key=True)
     is_complete = models.BooleanField(default=False)
 
     class Meta:
-        db_table = 'FITNESS_workout'
+        db_table = 'workout'
 
 
-class WorkoutExercise(models.Model):
-    exercise = models.ForeignKey(Exercise)
-    workout = models.ForeignKey(Workout)
+class WorkoutTypeFields(models.Model):
+    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=False)
+    units_of_measure = models.CharField(max_length=255, null=True)
 
     class Meta:
-        db_table = 'FITNESS_workouts_exercises'
+        db_table = 'workout_type_fields'
+
+
 
 
 

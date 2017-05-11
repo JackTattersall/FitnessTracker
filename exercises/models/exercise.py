@@ -1,36 +1,29 @@
 from django.db import models
+from exercises.models.workout import Workout, WorkoutTypeFields
 
 
 class Exercise(models.Model):
     name = models.CharField(max_length=255)
-    sessions = models.ManyToManyField(u'Session', through=u'ExerciseSession', related_name=u'exercises')
 
     class Meta:
-        db_table = 'FITNESS_exercise'
+        db_table = 'exercise'
 
     def __str__(self):
         return self.name
 
 
 class Session(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    reps = models.IntegerField(blank=True, null=True)
-    weight = models.IntegerField(blank=True, null=True)
-    sets = models.IntegerField(blank=True, null=True)
-    completed = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False)
+    completed = models.DateTimeField(null=True)
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    workout_type_fields = models.ForeignKey(WorkoutTypeFields, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'FITNESS_session'
+        db_table = 'session'
 
     def __str__(self):
-        return str('reps = {} sets = {} weight = {}'.format(self.reps, self.weight, self.sets))
+        return str('exercise {}'.format(self.exercise.name))
 
-
-class ExerciseSession(models.Model):
-    session = models.ForeignKey(Session)
-    exercise = models.ForeignKey(Exercise)
-
-    class Meta:
-        db_table = 'FITNESS_exercise_sessions'
 
 
