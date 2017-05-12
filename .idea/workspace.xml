@@ -2,21 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22fab755-d110-47f9-afae-56888a4b8751" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/api/tests/api/test_api_base.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/api/tests/api/test_session_view_set.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exercises/migrations/0002_auto_20170511_1927.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/api.py" afterPath="$PROJECT_DIR$/api/api.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/serializers.py" afterPath="$PROJECT_DIR$/api/serializers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/tests/api/test_exercise_view_set.py" afterPath="$PROJECT_DIR$/api/tests/api/test_exercise_view_set.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/urls.py" afterPath="$PROJECT_DIR$/api/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/models/__init__.py" afterPath="$PROJECT_DIR$/exercises/models/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/models/exercise.py" afterPath="$PROJECT_DIR$/exercises/models/exercise.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/models/workout.py" afterPath="$PROJECT_DIR$/exercises/models/workout.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/templates/start_workout.html" afterPath="$PROJECT_DIR$/exercises/templates/start_workout.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/tests/factories.py" afterPath="$PROJECT_DIR$/exercises/tests/factories.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exercises/tests/test_exercises.py" afterPath="$PROJECT_DIR$/exercises/tests/test_exercises.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/tests/api/test_api_base.py" afterPath="$PROJECT_DIR$/api/tests/api/test_api_base.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/tests/api/test_session_view_set.py" afterPath="$PROJECT_DIR$/api/tests/api/test_session_view_set.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,8 +23,8 @@
       <file leaf-file-name="test_exercise_view_set.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/tests/api/test_exercise_view_set.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
-              <caret line="26" column="85" lean-forward="true" selection-start-line="16" selection-start-column="4" selection-end-line="26" selection-end-column="85" />
+            <state relative-caret-position="178">
+              <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
@@ -46,8 +35,8 @@
       <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="25" column="60" lean-forward="false" selection-start-line="25" selection-start-column="60" selection-end-line="25" selection-end-column="60" />
+            <state relative-caret-position="-142">
+              <caret line="18" column="64" lean-forward="false" selection-start-line="18" selection-start-column="64" selection-end-line="18" selection-end-column="64" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
               </folding>
@@ -58,8 +47,8 @@
       <file leaf-file-name="exercise.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/exercises/models/exercise.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="18" column="102" lean-forward="false" selection-start-line="18" selection-start-column="102" selection-end-line="18" selection-end-column="102" />
+            <state relative-caret-position="157">
+              <caret line="21" column="28" lean-forward="true" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -69,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/api/tests/api/test_api_base.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="336">
-              <caret line="47" column="9" lean-forward="false" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
+              <caret line="47" column="8" lean-forward="false" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
@@ -80,8 +69,8 @@
       <file leaf-file-name="test_session_view_set.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/tests/api/test_session_view_set.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="47" column="67" lean-forward="false" selection-start-line="47" selection-start-column="67" selection-end-line="47" selection-end-column="67" />
+            <state relative-caret-position="351">
+              <caret line="82" column="68" lean-forward="true" selection-start-line="82" selection-start-column="68" selection-end-line="82" selection-end-column="68" />
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
               </folding>
@@ -93,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/exercises/tests/factories.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="226">
-              <caret line="33" column="46" lean-forward="true" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
+              <caret line="33" column="46" lean-forward="false" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
               </folding>
@@ -1093,7 +1082,7 @@
     <entry file="file://$PROJECT_DIR$/exercises/tests/factories.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
-          <caret line="33" column="46" lean-forward="true" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
+          <caret line="33" column="46" lean-forward="false" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
           <folding>
             <element signature="e#0#45#0" expanded="true" />
           </folding>
@@ -1103,7 +1092,7 @@
     <entry file="file://$PROJECT_DIR$/api/tests/api/test_api_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
-          <caret line="47" column="9" lean-forward="false" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
+          <caret line="47" column="8" lean-forward="false" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>
@@ -1112,8 +1101,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/tests/api/test_exercise_view_set.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="26" column="85" lean-forward="true" selection-start-line="16" selection-start-column="4" selection-end-line="26" selection-end-column="85" />
+        <state relative-caret-position="178">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>
@@ -1122,16 +1111,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/exercises/models/exercise.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="18" column="102" lean-forward="false" selection-start-line="18" selection-start-column="102" selection-end-line="18" selection-end-column="102" />
+        <state relative-caret-position="157">
+          <caret line="21" column="28" lean-forward="true" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/api/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="25" column="60" lean-forward="false" selection-start-line="25" selection-start-column="60" selection-end-line="25" selection-end-column="60" />
+        <state relative-caret-position="-142">
+          <caret line="18" column="64" lean-forward="false" selection-start-line="18" selection-start-column="64" selection-end-line="18" selection-end-column="64" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
@@ -1140,8 +1129,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/tests/api/test_session_view_set.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="47" column="67" lean-forward="false" selection-start-line="47" selection-start-column="67" selection-end-line="47" selection-end-column="67" />
+        <state relative-caret-position="351">
+          <caret line="82" column="68" lean-forward="true" selection-start-line="82" selection-start-column="68" selection-end-line="82" selection-end-column="68" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
           </folding>

@@ -45,5 +45,5 @@ class ApiTestBase(APITestCase):
         # authenticated
         self._require_login()
         response = self.client.post(reverse(url), data)
-        #print(simplejson.loads(response.content))
+        print(simplejson.loads(response.content))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=msg + ' post authenticated')

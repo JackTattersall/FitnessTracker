@@ -16,7 +16,7 @@ class SessionValuesSerializer(serializers.ModelSerializer):
 class SessionSerializer(serializers.ModelSerializer):
     completed = serializers.DateTimeField(required=False)
     session_values = SessionValuesSerializer(many=True, required=False)
-    exercise_name = serializers.CharField(source='exercise.name', required=False)
+    exercise_name = serializers.CharField(source='exercise.name')
 
     class Meta:
         model = Session

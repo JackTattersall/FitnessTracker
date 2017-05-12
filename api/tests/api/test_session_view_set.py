@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from exercises.tests.factories import ExerciseFactory, SessionFactory, WorkoutFactory
 from api.tests.api.test_api_base import ApiTestBase
+from exercises.models.exercise import Exercise
 import simplejson
 
 
@@ -32,7 +33,7 @@ class SessionViewSetTests(ApiTestBase):
 
     def test_post_authentication(self):
         self.valid_session_data = {
-            "is_complete": True,
+            "exercise_name": "press-ups",
             "workout": 1
         }
         self.post_authentication('api:session-list', self.valid_session_data, 'session')
@@ -46,4 +47,38 @@ class SessionViewSetTests(ApiTestBase):
         response = self.client.post(reverse('api:session-list'), self.valid_session_data)
         print(simplejson.loads(response.content))
         self.assertContains(response, 'press-ups', status_code=201)
+        self.assertEqual(Exercise.objects.count(), 1)
+
+    def test_post_session_including_new_exercise_name(self):
+        self.valid_session_data = {
+            "exercise_name": "jump-ups",
+            "workout": 1
+        }
+        self._require_login()
+        response = self.client.post(reverse('api:session-list'), self.valid_session_data)
+        print(simplejson.loads(response.content))
+        self.assertContains(response, 'jump-ups', status_code=201)
+        self.assertEqual(Exercise.objects.count(), 2)
+
+    def test_post_session_workout_required(self):
+        self.valid_session_data = {
+            "exercise_name": "jump-ups"
+        }
+        self._require_login()
+        response = self.client.post(reverse('api:session-list'), self.valid_session_data)
+        print(simplejson.loads(response.content))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'workout', status_code=400)
+        self.assertNotContains(response, 'exercise', status_code=400)
+
+    def test_post_session_exercise_name_required(self):
+        self.valid_session_data = {
+            "workout": 1
+        }
+        self._require_login()
+        response = self.client.post(reverse('api:session-list'), self.valid_session_data)
+        print(simplejson.loads(response.content))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'exercise', status_code=400)
+        self.assertNotContains(response, 'workout', status_code=400)
 
