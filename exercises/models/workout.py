@@ -12,7 +12,7 @@ class WorkoutType(models.Model):
 class Workout(models.Model):
     completed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    workout_type = models.OneToOneField(WorkoutType, on_delete=models.CASCADE, primary_key=True)
+    workout_type = models.OneToOneField(WorkoutType, on_delete=models.CASCADE)
     is_complete = models.BooleanField(default=False)
 
     class Meta:
@@ -20,7 +20,7 @@ class Workout(models.Model):
 
 
 class WorkoutTypeFields(models.Model):
-    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE)
+    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE, related_name='workout_type_fields')
     name = models.CharField(max_length=255, null=False)
     units_of_measure = models.CharField(max_length=255, null=True)
 

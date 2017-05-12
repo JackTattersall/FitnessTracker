@@ -1,16 +1,10 @@
 from factory.django import DjangoModelFactory
 from factory import RelatedFactory, SubFactory
-from exercises.models.exercise import Exercise, Session, ExerciseSession
-from exercises.models.workout import Workout, WorkoutType, WorkoutExercise
+from exercises.models.exercise import Exercise, Session, SessionValues
+from exercises.models.workout import Workout, WorkoutType, WorkoutTypeFields
 from django.contrib.auth.models import User
 import factory
 import datetime
-
-
-class ExerciseFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Exercise
 
 
 class UserFactory(DjangoModelFactory):
@@ -36,24 +30,27 @@ class WorkoutFactory(DjangoModelFactory):
 
 
 class SessionFactory(DjangoModelFactory):
-    created = datetime.datetime.now()
+    exercise_id = factory.sequence(lambda n: n)
+    workout_id = factory.sequence(lambda n: n)
 
     class Meta:
         model = Session
 
 
-class WorkoutsExercisesFactroy(DjangoModelFactory):
-    workout = factory.SubFactory(Workout)
-    exercise = factory.SubFactory(Exercise)
+class ExerciseFactory(DjangoModelFactory):
 
     class Meta:
-        model = WorkoutExercise
+        model = Exercise
 
 
-class ExercisesSessionsFactory(DjangoModelFactory):
-    exercise = factory.SubFactory(Exercise)
-    session = factory.SubFactory(SessionFactory)
+class WorkoutTypeFieldsFactroy(DjangoModelFactory):
 
     class Meta:
-        model = ExerciseSession
+        model = WorkoutTypeFields
+
+
+class SessionsValuesFactory(DjangoModelFactory):
+
+    class Meta:
+        model = SessionValues
 

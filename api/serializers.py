@@ -1,45 +1,86 @@
+from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
-from exercises.models.exercise import Exercise, Session
+from exercises.models.exercise import Exercise, Session, SessionValues
 from exercises.models.workout import Workout, WorkoutTypeFields, WorkoutType
 import datetime
+
+
+class SessionValuesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SessionValues
+        fields = ('id', 'value', 'session', 'workout_type_fields')
+
+
+class SessionSerializer(serializers.ModelSerializer):
+    completed = serializers.DateTimeField(required=False)
+    session_values = SessionValuesSerializer(many=True, required=False)
+    exercise_name = serializers.CharField(source='exercise.name', required=False)
+
+    class Meta:
+        model = Session
+        fields = ('id', 'workout', 'exercise_name', 'exercise', 'completed', 'is_complete', 'session_values')
+
+    def create(self, validated_data):
+        exercise_data = validated_data.pop('exercise', None)
+
+        if exercise_data:
+            exercise, exercise_created = Exercise.objects.get_or_create(name=exercise_data['name'])
+            session = Session.objects.create(**validated_data, exercise=exercise)
+        else:
+            session = Session.objects.create(**validated_data)
+
+        return session
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ('name', 'session_set')
-
-
-class WorkoutSerializer(serializers.ModelSerializer):
-    created = serializers.DateTimeField(required=False)
-    completed = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = Workout
-        fields = ('created', 'completed', 'is_complete', 'workout_type', 'session_set')
-
-
-class SessionSerializer(serializers.ModelSerializer):
-    completed = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = Session
-        fields = ('workout', 'exercise', 'completed', 'is_complete', 'workout_type_fields')
+        fields = ('id', 'name')
 
 
 class WorkoutTypeFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkoutTypeFields
-        fields = ('workout_type', 'name', 'units_of_measure', 'session_set')
+        fields = ('id', 'workout_type', 'name', 'units_of_measure', 'session_values')
 
 
 class WorkoutTypeSerializer(serializers.ModelSerializer):
+    workout_type_fields = WorkoutTypeFieldsSerializer(many=True, required=False)
 
     class Meta:
         model = WorkoutType
-        fields = ('name', 'description', 'workouttypefields_set')
+        fields = ('id', 'name', 'description', 'workout_type_fields', 'workout')
+
+
+class WorkoutSerializer(serializers.ModelSerializer):
+    created = serializers.DateTimeField(required=False)
+    completed = serializers.DateTimeField(required=False)
+    session = SessionSerializer(many=True, required=False)
+    workout_type = WorkoutTypeSerializer(many=False, required=False)
+
+    class Meta:
+        model = Workout
+        fields = ('id', 'created', 'completed', 'is_complete', 'workout_type', 'session')
+        related_fields = ['workout_type']
+
+    def update(self, instance, validated_data):
+        # Handle related objects
+        for related_obj_name in self.Meta.related_fields:
+
+            # Validated data will show the nested structure
+            data = validated_data.pop(related_obj_name)
+            related_instance = getattr(instance, related_obj_name)
+
+            # Same as default update implementation
+            for attr_name, value in data.items():
+                setattr(related_instance, attr_name, value)
+            related_instance.save()
+        return super(WorkoutSerializer, self).update(instance, validated_data)
+
 
 # class ExerciseSerializer(serializers.ModelSerializer):
 #     sessions = serializers.SerializerMethodField()

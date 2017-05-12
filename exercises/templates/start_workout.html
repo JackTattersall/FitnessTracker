@@ -63,7 +63,7 @@
 		var workoutCreated;
 		var is_complete;
 
-		$.getJSON( "/api/workout/?latest=latest/", function(data) {
+		$.getJSON( "/api/workout/?term=latest/", function(data) {
 			workoutId = data.results[0]['id'];
 			workoutCreated = data.results[0]['created'];
 			is_complete = data.results[0]['is_complete'];
@@ -173,7 +173,7 @@
 				  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 				},
 				data: JSON.stringify({
-					workout_type: workoutType
+					workout_type_name: $('#workout_name').val()
 				}),
 				success: function (response) {
 					workoutCreated = response['created'];
