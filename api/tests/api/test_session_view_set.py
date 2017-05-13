@@ -1,11 +1,8 @@
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
 from rest_framework import status
-from exercises.tests.factories import ExerciseFactory, SessionFactory, WorkoutFactory
+from exercises.tests.factories import ExerciseFactory, SessionFactory, WorkoutFactory, SessionsValuesFactory
 from api.tests.api.test_api_base import ApiTestBase
 from exercises.models.exercise import Exercise
-import simplejson
 
 
 class SessionViewSetTests(ApiTestBase):
@@ -13,14 +10,19 @@ class SessionViewSetTests(ApiTestBase):
     def setUp(self):
         super(SessionViewSetTests, self).setUp()
 
-        # Sessions
-        self.session_1 = SessionFactory()
-
         # Exercises
         self.exercise_1 = ExerciseFactory(name='press-ups')
 
+        # Sessions
+        self.session_1 = SessionFactory(exercise_id=self.exercise_1.id)
+
         # Workout
         self.workout_1 = WorkoutFactory(id=1)
+
+        # SessionValues
+        self.session_value_1 = SessionsValuesFactory(value=66,
+                                                     workout_type_fields_id=1,
+                                                     session_id=self.session_1.id)
 
     # API VIEWS TESTS #
 
@@ -45,7 +47,6 @@ class SessionViewSetTests(ApiTestBase):
         }
         self._require_login()
         response = self.client.post(reverse('api:session-list'), self.valid_session_data)
-        print(simplejson.loads(response.content))
         self.assertContains(response, 'press-ups', status_code=201)
         self.assertEqual(Exercise.objects.count(), 1)
 
@@ -56,7 +57,6 @@ class SessionViewSetTests(ApiTestBase):
         }
         self._require_login()
         response = self.client.post(reverse('api:session-list'), self.valid_session_data)
-        print(simplejson.loads(response.content))
         self.assertContains(response, 'jump-ups', status_code=201)
         self.assertEqual(Exercise.objects.count(), 2)
 
@@ -66,7 +66,6 @@ class SessionViewSetTests(ApiTestBase):
         }
         self._require_login()
         response = self.client.post(reverse('api:session-list'), self.valid_session_data)
-        print(simplejson.loads(response.content))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertContains(response, 'workout', status_code=400)
         self.assertNotContains(response, 'exercise', status_code=400)
@@ -77,8 +76,9 @@ class SessionViewSetTests(ApiTestBase):
         }
         self._require_login()
         response = self.client.post(reverse('api:session-list'), self.valid_session_data)
-        print(simplejson.loads(response.content))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertContains(response, 'exercise', status_code=400)
         self.assertNotContains(response, 'workout', status_code=400)
+
+
 

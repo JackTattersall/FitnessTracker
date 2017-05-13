@@ -25,11 +25,8 @@ class SessionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercise', None)
 
-        if exercise_data:
-            exercise, exercise_created = Exercise.objects.get_or_create(name=exercise_data['name'])
-            session = Session.objects.create(**validated_data, exercise=exercise)
-        else:
-            session = Session.objects.create(**validated_data)
+        exercise, exercise_created = Exercise.objects.get_or_create(name=exercise_data['name'])
+        session = Session.objects.create(**validated_data, exercise=exercise)
 
         return session
 
@@ -60,26 +57,19 @@ class WorkoutSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(required=False)
     completed = serializers.DateTimeField(required=False)
     session = SessionSerializer(many=True, required=False)
-    workout_type = WorkoutTypeSerializer(many=False, required=False)
+    workout_type_name = serializers.CharField(required=True, source='workout_type.name')
 
     class Meta:
         model = Workout
-        fields = ('id', 'created', 'completed', 'is_complete', 'workout_type', 'session')
+        fields = ('id', 'created', 'completed', 'is_complete', 'workout_type_name', 'session')
         related_fields = ['workout_type']
 
-    def update(self, instance, validated_data):
-        # Handle related objects
-        for related_obj_name in self.Meta.related_fields:
+    def create(self, validated_data):
+        workout_type_data = validated_data.pop('workout_type', None)
+        workout_type = get_object_or_404(WorkoutType, **workout_type_data)
+        workout = Workout.objects.create(**validated_data, workout_type=workout_type)
 
-            # Validated data will show the nested structure
-            data = validated_data.pop(related_obj_name)
-            related_instance = getattr(instance, related_obj_name)
-
-            # Same as default update implementation
-            for attr_name, value in data.items():
-                setattr(related_instance, attr_name, value)
-            related_instance.save()
-        return super(WorkoutSerializer, self).update(instance, validated_data)
+        return workout
 
 
 # class ExerciseSerializer(serializers.ModelSerializer):

@@ -12,7 +12,7 @@ class WorkoutType(models.Model):
 class Workout(models.Model):
     completed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    workout_type = models.OneToOneField(WorkoutType, on_delete=models.CASCADE)
+    workout_type = models.OneToOneField(WorkoutType, on_delete=models.CASCADE, null=True)
     is_complete = models.BooleanField(default=False)
 
     class Meta:

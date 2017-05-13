@@ -18,6 +18,8 @@ class UserFactory(DjangoModelFactory):
 
 
 class WorkoutTypeFactory(DjangoModelFactory):
+    id = factory.sequence(lambda n: n)
+
     class Meta:
         model = WorkoutType
 

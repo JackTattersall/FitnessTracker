@@ -23,16 +23,16 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     serializer_class = WorkoutSerializer
     queryset = Workout.objects.all()
 
-    def get_queryset(self):
-        queryset = Workout.objects.all()
-
-        term = self.request.query_params.get('term', None)
-        if term == 'latest/':
-            queryset = queryset.filter(is_complete=True).order_by('-created')
-            if queryset:
-                queryset = [queryset[0]]
-
-        return queryset
+    # def get_queryset(self):
+    #     queryset = Workout.objects.all()
+    #
+    #     term = self.request.query_params.get('term', None)
+    #     if term == 'latest/':
+    #         queryset = queryset.filter(is_complete=True).order_by('-created')
+    #         if queryset:
+    #             queryset = [queryset[0]]
+    #
+    #     return queryset
 
 
 class WorkoutTypeViewSet(viewsets.ModelViewSet):
