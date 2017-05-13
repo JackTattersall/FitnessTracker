@@ -1,11 +1,11 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from .serializers import ExerciseSerializer, SessionSerializer, WorkoutSerializer, WorkoutTypeSerializer,\
-    WorkoutTypeFieldsSerializer, SessionValuesSerializer
+from .serializers import ExerciseSerializer, SessionSerializer, WorkoutSerializer, ExerciseFieldsSerializer,\
+    WorkoutTypeSerializer, SessionValuesSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from exercises.models.exercise import Exercise, Session, SessionValues
-from exercises.models.workout import Workout, WorkoutType, WorkoutTypeFields
+from exercises.models.exercise import Exercise, Session, SessionValues, ExerciseFields
+from exercises.models.workout import Workout, WorkoutType
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -40,9 +40,9 @@ class WorkoutTypeViewSet(viewsets.ModelViewSet):
     queryset = WorkoutType.objects.all()
 
 
-class WorkoutTypeFieldsViewSet(viewsets.ModelViewSet):
-    serializer_class = WorkoutTypeFieldsSerializer
-    queryset = WorkoutTypeFields.objects.all()
+class ExerciseFieldsViewSet(viewsets.ModelViewSet):
+    serializer_class = ExerciseFieldsSerializer
+    queryset = ExerciseFields.objects.all()
 
 
 class SessionViewSet(viewsets.ModelViewSet):

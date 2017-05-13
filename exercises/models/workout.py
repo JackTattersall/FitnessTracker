@@ -19,15 +19,6 @@ class Workout(models.Model):
         db_table = 'workout'
 
 
-class WorkoutTypeFields(models.Model):
-    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE, related_name='workout_type_fields')
-    name = models.CharField(max_length=255, null=False)
-    units_of_measure = models.CharField(max_length=255, null=True)
-
-    class Meta:
-        db_table = 'workout_type_fields'
-
-
 
 
 

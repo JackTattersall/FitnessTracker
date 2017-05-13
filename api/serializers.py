@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from exercises.models.exercise import Exercise, Session, SessionValues
-from exercises.models.workout import Workout, WorkoutTypeFields, WorkoutType
+from exercises.models.exercise import Exercise, Session, SessionValues, ExerciseFields
+from exercises.models.workout import Workout, WorkoutType
 import datetime
 
 
@@ -10,7 +10,7 @@ class SessionValuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SessionValues
-        fields = ('id', 'value', 'session', 'workout_type_fields')
+        fields = ('id', 'value', 'session', 'exercise_fields')
 
 
 class SessionSerializer(serializers.ModelSerializer):
@@ -38,15 +38,15 @@ class ExerciseSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class WorkoutTypeFieldsSerializer(serializers.ModelSerializer):
+class ExerciseFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = WorkoutTypeFields
-        fields = ('id', 'workout_type', 'name', 'units_of_measure', 'session_values')
+        model = ExerciseFields
+        fields = ('id', 'exercise', 'name', 'units_of_measure', 'session_values')
 
 
 class WorkoutTypeSerializer(serializers.ModelSerializer):
-    workout_type_fields = WorkoutTypeFieldsSerializer(many=True, required=False)
+    workout_type_fields = ExerciseFieldsSerializer(many=True, required=False)
 
     class Meta:
         model = WorkoutType

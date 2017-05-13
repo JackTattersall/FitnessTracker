@@ -1,5 +1,5 @@
 from django.db import models
-from exercises.models.workout import Workout, WorkoutTypeFields
+from exercises.models.workout import Workout
 
 
 class Exercise(models.Model):
@@ -25,13 +25,27 @@ class Session(models.Model):
         return str('exercise {}'.format(self.exercise.name))
 
 
+class ExerciseFields(models.Model):
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='exercise_fields')
+    name = models.CharField(max_length=255, null=False)
+    units_of_measure = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = 'exercise_fields'
+
+
 class SessionValues(models.Model):
     value = models.CharField(max_length=255)
-    workout_type_fields = models.ForeignKey(WorkoutTypeFields, on_delete=models.CASCADE, related_name='session_values')
+    exercise_fields = models.ForeignKey(ExerciseFields,
+                                        on_delete=models.CASCADE,
+                                        related_name='session_values',
+                                        default=0)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='session_values')
 
     class Meta:
         db_table = 'session_values'
+
+
 
 
 

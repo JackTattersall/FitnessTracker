@@ -1,7 +1,7 @@
 from factory.django import DjangoModelFactory
 from factory import RelatedFactory, SubFactory
-from exercises.models.exercise import Exercise, Session, SessionValues
-from exercises.models.workout import Workout, WorkoutType, WorkoutTypeFields
+from exercises.models.exercise import Exercise, Session, SessionValues, ExerciseFields
+from exercises.models.workout import Workout, WorkoutType
 from django.contrib.auth.models import User
 import factory
 import datetime
@@ -45,10 +45,10 @@ class ExerciseFactory(DjangoModelFactory):
         model = Exercise
 
 
-class WorkoutTypeFieldsFactroy(DjangoModelFactory):
+class ExerciseFieldsFactory(DjangoModelFactory):
 
     class Meta:
-        model = WorkoutTypeFields
+        model = ExerciseFields
 
 
 class SessionsValuesFactory(DjangoModelFactory):

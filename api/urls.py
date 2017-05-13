@@ -9,7 +9,7 @@ router.register(r'exercise', ExerciseViewSet, 'exercise')
 router.register(r'session', SessionViewSet, 'session')
 router.register(r'workout', WorkoutViewSet, 'workout')
 router.register(r'workout-type', WorkoutTypeViewSet, 'workout-type')
-router.register(r'workout-type-fields', WorkoutTypeFieldsViewSet, 'workout-type-fields')
+router.register(r'exercise-fields', ExerciseFieldsViewSet, 'exercisefields')
 router.register(r'session-values', SessionValuesViewSet, 'session-values')
 
 urlpatterns = [

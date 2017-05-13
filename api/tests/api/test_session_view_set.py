@@ -21,7 +21,7 @@ class SessionViewSetTests(ApiTestBase):
 
         # SessionValues
         self.session_value_1 = SessionsValuesFactory(value=66,
-                                                     workout_type_fields_id=1,
+                                                     exercise_fields_id=1,
                                                      session_id=self.session_1.id)
 
     # API VIEWS TESTS #
