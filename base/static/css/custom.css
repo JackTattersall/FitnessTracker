@@ -5,3 +5,7 @@ body {
 #complete_workout_btn{
     margin-top: 10px;
 }
+
+.label-top-buffer { margin-top:10px; }
+
+.top-buffer { margin-top:5px; }
