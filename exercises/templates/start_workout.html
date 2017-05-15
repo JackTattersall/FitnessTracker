@@ -4,38 +4,41 @@
 {% block title %}Workout{% endblock %}
 
 {% block content %}
-	<h1>Workout</h1>
-	<h2 id="workout_type_name"></h2>
-	<div>
-		<form action="." id="start_workout_form" method="post" hidden="true">
-		{% csrf_token %}
-		Workout type<br>
-		<input type="text" id="workout_name" value=""><br><br>
-		<input type="submit" id="start" value="Start">
-	</form>
 
-	</div>
-	<table id="exercise_table" hidden="true">
-		<thead>
-			<tr>
-				<th>Exercise</th>
-				<th>Sets</th>
-				<th>Reps</th>
-				<th>Weight</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
-	<form action="." id="add_exercise_form" method="post" hidden="true">
-		{% csrf_token %}
-		Add new exercise:<br>
-		<input type="text" id="exercise_name" value=""><br><br>
-		<input type="submit" id="add" value="Add">
-	</form>
-	<div>
-		<input type="submit" id="complete_workout" value="Complete Workout" hidden="true">
-	</div>
+    <div class="jumbotron container-fluid text-center">
+	    <h1>Workout</h1>
+    </div>
+
+    <div class="page-header">
+        <h2 id="workout_type_name"></h2>
+    </div>
+
+    <div id="workout_type_form" class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="form-group selectize">
+                <label class="control-label" for="workout_type_select">Workout Type</label>
+                <select name="workout_type_select" class="text-grey select2-field form-control" id="workout_type_select" multiple="multiple"></select>
+            </div>
+            <input class="btn btn-primary" type="submit" id="start_workout" value="Start">
+        </div>
+    </div>
+
+    <div id="exercise_form" class="row" style="visibility: hidden;">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="form-group selectize">
+                <label class="control-label" for="exercise_select">Exercise</label>
+                <select name="exercise_select" class="text-grey select2-field form-control" id="exercise_select" multiple="multiple"></select>
+            </div>
+            <input class="btn btn-primary" type="submit" id="add_exercise" value="Add">
+        </div>
+    </div>
+
+    <div class="row" id="complete_workout_btn" hidden>
+        <div>
+            <input class="btn btn-primary" type="submit" id="complete_workout" value="Complete Workout">
+        </div>
+    </div>
+
 
 	<script type="text/javascript">
 
@@ -58,21 +61,26 @@
 
 
 	$(document).ready(function() {
+	    $("#exercise_select").select2({ width: 'resolve' });
 
 		var workoutId;
 		var workoutCreated;
-		var is_complete;
+		var is_complete = true;
+		var workoutTypeName;
 
 		$.getJSON( "/api/workout/?term=latest/", function(data) {
-			workoutId = data.results[0]['id'];
-			workoutCreated = data.results[0]['created'];
-			is_complete = data.results[0]['is_complete'];
+		    if (data['count'] > 0) {
+                workoutId = data.results[0]['id'];
+                workoutCreated = data.results[0]['created'];
+                is_complete = data.results[0]['is_complete'];
+                workoutTypeName = data.results[0]['workout_type_name']
+            }
 			if (is_complete === false) {
 				$('#exercise_table').prop('hidden', false);
 				$('#add_exercise_form').prop('hidden', false);
 				$('#start_workout_form').prop('hidden', true);
-				$('#workout_type_name').append(data.results[0]['workout_type']['name']);
-				$('#complete_workout').prop('hidden', false);
+				$('#workout_type_name').append(workoutTypeName);
+{#				$('#complete_workout').prop('hidden', false);#}
 				createTable(data.results[0]);
 				console.log(`Initial data load - workout with id ${data.results[0]['id']} not marked as completed`);
 			}
@@ -161,7 +169,7 @@
 			});
 		});
 
-		$('#start_workout_form').on('submit', function(e) {
+		$('#start_workout').on('click', function(e) {
 			e.preventDefault();
 			var workoutType =
 				{ name: $('#workout_name').val() };
@@ -173,14 +181,14 @@
 				  request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 				},
 				data: JSON.stringify({
-					workout_type_name: $('#workout_name').val()
+					workout_type_name: workoutTypeName
 				}),
 				success: function (response) {
 					workoutCreated = response['created'];
-					$('#add_exercise_form').prop('hidden', false);
-					$('#start_workout_form').prop('hidden', true);
+					$('#exercise_form').css('visibility', 'visible');
+					$('#workout_type_form').prop('hidden', true);
+					$('#complete_workout_btn').prop('hidden', false);
 					$('#workout_type_name').append(response['workout_type']['name']);
-					$('#complete_workout').prop('hidden', false);
 
 				},
 				error: function () {
@@ -231,14 +239,14 @@
 		$('#complete_workout').on('click', function (e) {
             e.preventDefault();
             $.ajax({
-                type: 'POST',
+                type: 'PUT',
                 contentType: 'application/JSON',
                 beforeSend: function (request) {
                     request.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
                 },
                 data: JSON.stringify({
-                    created: workoutCreated,
                     is_complete: true,
+
                 }),
                 success: function (response) {
                     console.log(`workout completed successfully with id ${response['id']}`);
@@ -247,10 +255,71 @@
                 error: function (response) {
                     console.log(`workout completed failed ${response}`)
                 },
-                url: '/api/workout/',
+                url: `/api/workout/${workoutId}/`,
                 cache: false
             });
         });
+
+		$('#exercise_select').select2({
+            placeholder: "Select a state",
+            allowClear: true,
+            ajax: {
+                // Delay added so that calls to search API methods are not made before they are necessary
+                delay: 250,
+                url: '/api/exercise/',
+                dataType: 'json',
+                processResults: data => {
+                    return {
+                        results: $.map(data.results, item => {
+                            return {
+                                text: item.name,
+                                id: item.id,
+                            };
+                        })
+                    };
+                }
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+{#            minimumInputLength: 1,#}
+            templateResult: item => {
+                if (item.loading) { return 'Searching...'; }
+                return item.text
+            }
+        });
+
+		$('#workout_type_select').select2({
+            placeholder: "Select a state",
+            allowClear: true,
+            maximumSelectionLength: 1,
+            ajax: {
+                // Delay added so that calls to search API methods are not made before they are necessary
+                delay: 250,
+                url: '/api/workout-type/',
+                dataType: 'json',
+                processResults: data => {
+                    return {
+                        results: $.map(data.results, item => {
+                            return {
+                                text: item.name,
+                                id: item.id,
+                            };
+                        })
+                    };
+                }
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+{#            minimumInputLength: 1,#}
+            templateResult: item => {
+                if (item.loading) { return 'Searching...'; }
+                return item.text
+            }
+        });
+
+		$('#workout_type_select').on('select2:select', function (e) {
+            workoutTypeName = e['params']['data']['text'];
+        })
+
+
 	});
 	</script>
 {% endblock %}

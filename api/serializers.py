@@ -15,6 +15,7 @@ class SessionValuesSerializer(serializers.ModelSerializer):
 
 class SessionSerializer(serializers.ModelSerializer):
     completed = serializers.DateTimeField(required=False)
+    is_complete = serializers.BooleanField(required=False, default=False)
     session_values = SessionValuesSerializer(many=True, required=False)
     exercise_name = serializers.CharField(source='exercise.name')
 
@@ -24,6 +25,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         exercise_data = validated_data.pop('exercise', None)
+        session_values_data = validated_data.pop('session_values', None)
 
         exercise, exercise_created = Exercise.objects.get_or_create(name=exercise_data['name'])
         session = Session.objects.create(**validated_data, exercise=exercise)
@@ -31,18 +33,19 @@ class SessionSerializer(serializers.ModelSerializer):
         return session
 
 
-class ExerciseSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Exercise
-        fields = ('id', 'name')
-
-
 class ExerciseFieldsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ExerciseFields
         fields = ('id', 'exercise', 'name', 'units_of_measure', 'session_values')
+
+
+class ExerciseSerializer(serializers.ModelSerializer):
+    # exercise_fields = serializers.ManyRelatedField(required=False, child_relation=ExerciseFields)
+
+    class Meta:
+        model = Exercise
+        fields = ('id', 'name', 'exercise_fields')
 
 
 class WorkoutTypeSerializer(serializers.ModelSerializer):
@@ -57,7 +60,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(required=False)
     completed = serializers.DateTimeField(required=False)
     session = SessionSerializer(many=True, required=False)
-    workout_type_name = serializers.CharField(required=True, source='workout_type.name')
+    workout_type_name = serializers.CharField(required=False, source='workout_type.name')
 
     class Meta:
         model = Workout

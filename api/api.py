@@ -16,7 +16,15 @@ class SessionValuesViewSet(viewsets.ModelViewSet):
 
 class ExerciseViewSet(viewsets.ModelViewSet):
     serializer_class = ExerciseSerializer
-    queryset = Exercise.objects.all()
+
+    def get_queryset(self):
+        exercises = Exercise.objects.all()
+        term = self.request.query_params.get('term', None)
+
+        if term:
+            exercises = exercises.filter(name__istartswith=term)
+
+        return exercises
 
 
 class WorkoutViewSet(viewsets.ModelViewSet):

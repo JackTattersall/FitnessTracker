@@ -26,7 +26,7 @@ class Session(models.Model):
 
 
 class ExerciseFields(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='exercise_fields')
+    exercise = models.ManyToManyField(Exercise, related_name='exercise_fields')
     name = models.CharField(max_length=255, null=False)
     units_of_measure = models.CharField(max_length=255, null=True)
 
