@@ -303,6 +303,7 @@
 				  $('#exercise_table').prop('hidden', false);
 				  $('#add_exercise_form')[0].reset();
 				  createTable(response);
+				  createAndAddSession(response);
 				},
 				error: function(){
 
@@ -507,5 +508,59 @@
         })
 
 	});
+
+	function createAndAddSession(response){
+
+    }
+	
+	function stringBuilder(exerciseName, exerciseFields) {
+	    var outputHtml = ""
+
+        outputHtml += `
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            ${exerciseName}
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form">
+                        <div class="form-group">
+                            <label for="REPLACE1">
+                                Reps</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="REPLACE1" placeholder=""
+                                    required autofocus />
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-edit"></span></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardNumber">
+                                Sets</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="cardNumber" placeholder=""
+                                    required autofocus />
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-edit"></span></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardNumber">
+                                Weight</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="cardNumber" placeholder=""
+                                    required autofocus />
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-edit"></span></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-primary pull-right" type="submit" id="start_workout" value="Complete">
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `
+    }
 	</script>
 {% endblock %}
